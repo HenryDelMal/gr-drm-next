@@ -4,11 +4,10 @@ options:
     catch_exceptions: 'True'
     category: '[DRM Examples]'
     cmake_opt: ''
-    comment: Requires an external FAAD2 build with DRM decoder support; FAAD2 is not
-      bundled.
+    comment: Experimental DReaM-inspired Opus mode; not part of the ETSI DRM standard.
     copyright: ''
-    description: 'Full DRM transmitter and receiver loopback: FAAC, MLC, OFDM, synchronization,
-      channel decoding, FAAD2, and sound-card playback.'
+    description: 'Full experimental DRM transmitter and receiver loopback: Opus, MLC,
+      OFDM, synchronization, channel decoding, and sound-card playback.'
     gen_cmake: 'Off'
     gen_linking: dynamic
     generate_options: qt_gui
@@ -53,16 +52,15 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [32, 16]
+    coordinate: [160, 12.0]
     rotation: 0
     state: enabled
 - name: audio_encoder
-  id: drm_audio_encoder_sb
+  id: drm_opus_audio_encoder_fb
   parameters:
     affinity: ''
     alias: ''
     comment: ''
-    len_out: tp.msc().L_MUX()
     maxoutbuf: '0'
     minoutbuf: '0'
     tp: tp
@@ -71,6 +69,24 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [456, 216]
+    rotation: 0
+    state: enabled
+- name: blocks_wavfile_source_0
+  id: blocks_wavfile_source
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    file: /Users/henry/ecdc/27f_biobio_24k_mono.wav
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    nchan: '1'
+    repeat: 'True'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [56, 352.0]
     rotation: 0
     state: enabled
 - name: carrier_vector_to_stream
@@ -339,24 +355,6 @@ blocks:
     coordinate: [656, 216]
     rotation: 0
     state: enabled
-- name: pcm_scale
-  id: blocks_multiply_const_vxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: Scale normalized audio for the FAAC float PCM interface.
-    const: '32768.0'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    type: float
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [248, 216]
-    rotation: 0
-    state: enabled
 - name: programme_tone
   id: analog_sig_source_x
   parameters:
@@ -379,9 +377,9 @@ blocks:
     bus_structure: null
     coordinate: [32, 216]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: rx_audio_decoder
-  id: drm_audio_decoder_sb
+  id: drm_opus_audio_decoder_bf
   parameters:
     affinity: ''
     alias: ''
@@ -873,6 +871,7 @@ blocks:
 
 connections:
 - [audio_encoder, '0', msc_scrambler, '0']
+- [blocks_wavfile_source_0, '0', audio_encoder, '0']
 - [carrier_vector_to_stream, '0', constellation_preview, '0']
 - [cell_mapper, '0', carrier_vector_to_stream, '0']
 - [cell_mapper, '0', ifft, '0']
@@ -884,8 +883,6 @@ connections:
 - [msc_interleaver, '0', cell_mapper, '0']
 - [msc_mlc, '0', msc_interleaver, '0']
 - [msc_scrambler, '0', msc_mlc, '0']
-- [pcm_scale, '0', audio_encoder, '0']
-- [programme_tone, '0', pcm_scale, '0']
 - [rx_audio_decoder, '0', soundcard_sink, '0']
 - [rx_cell_demapper, '0', rx_msc_vector_to_stream, '0']
 - [rx_cell_demapper, '1', rx_sdc_vector_to_stream, '0']
