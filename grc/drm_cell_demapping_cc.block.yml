@@ -1,0 +1,29 @@
+id: drm_cell_demapping_cc
+label: DRM Cell Demapper
+category: '[DRM] Receiver'
+flags: [python, cpp]
+templates:
+  imports: import drm
+  make: drm.cell_demapping_cc(${tp})
+parameters:
+- id: tp
+  label: Transmission parameters
+  dtype: raw
+inputs:
+- domain: stream
+  dtype: complex
+  vlen: ${tp.ofdm().nfft()}
+outputs:
+- label: MSC
+  domain: stream
+  dtype: complex
+  vlen: ${tp.msc().N_MUX() * tp.ofdm().M_TF()}
+- label: SDC
+  domain: stream
+  dtype: complex
+  vlen: ${tp.sdc().N()}
+- label: FAC
+  domain: stream
+  dtype: complex
+  vlen: ${tp.fac().N() * tp.ofdm().M_TF()}
+file_format: 1
