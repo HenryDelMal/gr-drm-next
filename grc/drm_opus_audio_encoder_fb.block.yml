@@ -1,0 +1,21 @@
+id: drm_opus_audio_encoder_fb
+label: Opus Audio Encoder (Experimental)
+category: '[DRM]/Transmitter'
+flags: [python, cpp]
+templates:
+  imports: import drm_next as drm
+  make: drm.opus_audio_encoder_fb(${tp})
+parameters:
+- id: tp
+  label: Transmission parameters
+  dtype: raw
+inputs:
+- domain: stream
+  dtype: float
+outputs:
+- domain: stream
+  dtype: byte
+documentation: |-
+  Experimental DReaM-inspired Opus extension. This is not part of the ETSI DRM standard.
+  Input is mono PCM at the sample rate configured in the transmission parameters.
+file_format: 1

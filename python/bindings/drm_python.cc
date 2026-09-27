@@ -4,6 +4,8 @@
 #include <drm/add_tailbits_bb.h>
 #include <drm/audio_encoder_sb.h>
 #include <drm/audio_decoder_sb.h>
+#include <drm/opus_audio_encoder_fb.h>
+#include <drm/opus_audio_decoder_bf.h>
 #include <drm/ofdm_demodulator_cc.h>
 #include <drm/cell_demapping_cc.h>
 #include <drm/cell_mapping_cc.h>
@@ -133,6 +135,8 @@ PYBIND11_MODULE(drm_python, m)
     BIND_BLOCK(generate_sdc_b, gr::sync_block, py::arg("tp"), py::keep_alive<1, 2>());
     BIND_BLOCK(audio_encoder_sb, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
     BIND_BLOCK(audio_decoder_sb, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
+    BIND_BLOCK(opus_audio_encoder_fb, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
+    BIND_BLOCK(opus_audio_decoder_bf, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
     BIND_BLOCK(ofdm_demodulator_cc, gr::block, py::arg("nfft"), py::arg("ncp"),
                py::arg("fft_shift") = true);
     BIND_BLOCK(cell_demapping_cc, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
