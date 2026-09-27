@@ -2,8 +2,8 @@ options:
   parameters:
     author: HenryDelMal
     category: '[DRM Examples]'
-    comment: 'Perfect MSC loopback: validates FAAC framing and FAAD2 decoding before adding an RF receiver.'
-    description: 'DRM audio encoder to FAAD2 decoder loopback with sound-card playback.'
+    comment: 'Requires an external FAAD2 build with DRM decoder support; FAAD2 is not bundled.'
+    description: 'Full DRM transmitter and receiver loopback: FAAC, MLC, OFDM, synchronization, channel decoding, FAAD2, and sound-card playback.'
     gen_cmake: 'Off'
     gen_linking: dynamic
     generate_options: qt_gui
@@ -14,7 +14,7 @@ options:
     run_command: '{python} -u {filename}'
     run_options: prompt
     sizing_mode: fixed
-    title: DRM Audio Encoder/Decoder Loopback
+    title: DRM Full Audio Transceiver Loopback
   states:
     coordinate: [8, 8]
     rotation: 0
@@ -33,7 +33,7 @@ blocks:
     msc_prot_level_2_64: '0'
     sdc_mapping: '1'
     station_label: '"gr-drm loopback"'
-    text_message: '"FAAC to FAAD2 audio loopback"'
+    text_message: '"Full DRM transmitter and receiver"'
   states:
     coordinate: [32, 16]
     rotation: 0
@@ -44,17 +44,18 @@ blocks:
     affinity: ''
     alias: ''
     amp: '0.05'
-    comment: 'Replace this deterministic tone with a 24 kHz mono WAV source if desired.'
+    comment: 'Replace this tone with a 24 kHz mono WAV or audio source.'
     freq: '1000'
     maxoutbuf: '0'
     minoutbuf: '0'
     offset: '0'
     phase: '0'
     samp_rate: '24000'
+    showports: 'False'
     type: float
     waveform: analog.GR_COS_WAVE
   states:
-    coordinate: [32, 220]
+    coordinate: [32, 216]
     rotation: 0
     state: enabled
 - name: pcm_scale
@@ -62,14 +63,14 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    comment: 'FAAC float input scaling used by the transmitter block.'
+    comment: 'Scale normalized audio for the FAAC float PCM interface.'
     const: '32768.0'
     maxoutbuf: '0'
     minoutbuf: '0'
     type: float
     vlen: '1'
   states:
-    coordinate: [240, 220]
+    coordinate: [248, 216]
     rotation: 0
     state: enabled
 - name: audio_encoder
@@ -78,24 +79,184 @@ blocks:
     len_out: tp.msc().L_MUX()
     tp: tp
   states:
-    coordinate: [472, 220]
+    coordinate: [456, 216]
     rotation: 0
     state: enabled
-- name: msc_frame
-  id: blocks_stream_to_vector
+- name: msc_scrambler
+  id: drm_scrambler_bb
   parameters:
-    num_items: tp.msc().L_MUX()
-    type: byte
+    block_len: tp.msc().L_MUX()
   states:
-    coordinate: [696, 220]
+    coordinate: [656, 216]
     rotation: 0
     state: enabled
-- name: audio_decoder
-  id: drm_audio_decoder_sb
+- name: msc_mlc
+  id: mlc_bc
+  parameters:
+    channel_type: '"MSC"'
+    tp: tp
+  states:
+    coordinate: [848, 216]
+    rotation: 0
+    state: enabled
+- name: msc_interleaver
+  id: drm_interleaver_cc
+  parameters:
+    depth: 'drm.INTL_DEPTH_DRM'
+    interl_seq: tp.msc().cell_interl_seq()
+    long_interl: tp.cfg().long_interl()
+  states:
+    coordinate: [1040, 216]
+    rotation: 0
+    state: enabled
+- name: fac_generator
+  id: drm_generate_fac_b
   parameters:
     tp: tp
   states:
-    coordinate: [920, 220]
+    coordinate: [456, 368]
+    rotation: 0
+    state: enabled
+- name: fac_scrambler
+  id: drm_scrambler_bb
+  parameters:
+    block_len: tp.fac().L()
+  states:
+    coordinate: [656, 368]
+    rotation: 0
+    state: enabled
+- name: fac_mlc
+  id: mlc_bc
+  parameters:
+    channel_type: '"FAC"'
+    tp: tp
+  states:
+    coordinate: [848, 368]
+    rotation: 0
+    state: enabled
+- name: sdc_generator
+  id: drm_generate_sdc_b
+  parameters:
+    tp: tp
+  states:
+    coordinate: [456, 504]
+    rotation: 0
+    state: enabled
+- name: sdc_scrambler
+  id: drm_scrambler_bb
+  parameters:
+    block_len: tp.sdc().L()
+  states:
+    coordinate: [656, 504]
+    rotation: 0
+    state: enabled
+- name: sdc_mlc
+  id: mlc_bc
+  parameters:
+    channel_type: '"SDC"'
+    tp: tp
+  states:
+    coordinate: [848, 504]
+    rotation: 0
+    state: enabled
+- name: cell_mapper
+  id: cell_mapping_cc
+  parameters:
+    tp: tp
+  states:
+    coordinate: [1248, 320]
+    rotation: 0
+    state: enabled
+- name: carrier_vector_to_stream
+  id: blocks_vector_to_stream
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'Flatten mapped carriers for the constellation display.'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: tp.ofdm().nfft()
+    type: complex
+    vlen: '1'
+  states:
+    coordinate: [1456, 504]
+    rotation: 0
+    state: enabled
+- name: constellation_preview
+  id: qtgui_const_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    autoscale: 'False'
+    axislabels: 'True'
+    color1: '"blue"'
+    comment: 'MSC, SDC, FAC, and reference carriers before the IFFT.'
+    grid: 'True'
+    gui_hint: 0,0,1,1
+    label1: '"DRM carriers"'
+    legend: 'True'
+    marker1: '0'
+    name: '"DRM Transmit Constellation"'
+    nconnections: '1'
+    size: '2048'
+    style1: '0'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_slope: qtgui.TRIG_SLOPE_POS
+    tr_tag: '""'
+    type: complex
+    update_time: '0.10'
+    width1: '1'
+    xmax: '2'
+    xmin: '-2'
+    ymax: '2'
+    ymin: '-2'
+  states:
+    coordinate: [1664, 504]
+    rotation: 0
+    state: enabled
+- name: ifft
+  id: fft_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'Convert mapped DRM carriers to time-domain OFDM symbols.'
+    fft_size: tp.ofdm().nfft()
+    forward: 'False'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    nthreads: '1'
+    shift: 'True'
+    type: complex
+    window: '[]'
+  states:
+    coordinate: [1456, 320]
+    rotation: 0
+    state: enabled
+- name: cyclic_prefix
+  id: digital_ofdm_cyclic_prefixer
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'Serialize each IFFT vector and prepend the DRM cyclic prefix.'
+    cp_len: tp.ofdm().n_cp()
+    input_size: tp.ofdm().nfft()
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    rolloff: '0'
+    tagname: '""'
+  states:
+    coordinate: [1664, 320]
+    rotation: 0
+    state: enabled
+- name: receiver
+  id: drm_receiver_ccf
+  parameters:
+    tp: tp
+  states:
+    coordinate: [1888, 320]
     rotation: 0
     state: enabled
 - name: soundcard_sink
@@ -103,22 +264,35 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    comment: 'Decoded PCM output. Select the desired macOS output device.'
+    comment: 'Recovered 24 kHz PCM from the full DRM receiver.'
     device_name: '""'
     num_inputs: '1'
     ok_to_block: 'True'
-    samp_rate: '24000'
+    samp_rate: tp.cfg().audio_samp_rate()
   states:
-    coordinate: [1160, 220]
+    coordinate: [2112, 320]
     rotation: 0
     state: enabled
 
 connections:
 - [programme_tone, '0', pcm_scale, '0']
 - [pcm_scale, '0', audio_encoder, '0']
-- [audio_encoder, '0', msc_frame, '0']
-- [msc_frame, '0', audio_decoder, '0']
-- [audio_decoder, '0', soundcard_sink, '0']
+- [audio_encoder, '0', msc_scrambler, '0']
+- [msc_scrambler, '0', msc_mlc, '0']
+- [msc_mlc, '0', msc_interleaver, '0']
+- [msc_interleaver, '0', cell_mapper, '0']
+- [sdc_generator, '0', sdc_scrambler, '0']
+- [sdc_scrambler, '0', sdc_mlc, '0']
+- [sdc_mlc, '0', cell_mapper, '1']
+- [fac_generator, '0', fac_scrambler, '0']
+- [fac_scrambler, '0', fac_mlc, '0']
+- [fac_mlc, '0', cell_mapper, '2']
+- [cell_mapper, '0', carrier_vector_to_stream, '0']
+- [carrier_vector_to_stream, '0', constellation_preview, '0']
+- [cell_mapper, '0', ifft, '0']
+- [ifft, '0', cyclic_prefix, '0']
+- [cyclic_prefix, '0', receiver, '0']
+- [receiver, '0', soundcard_sink, '0']
 
 metadata:
   file_format: 1
