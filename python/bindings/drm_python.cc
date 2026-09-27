@@ -20,6 +20,7 @@
 #include <drm/qam_demapper_cb.h>
 #include <drm/mlc_decoder_bb.h>
 #include <drm/pilot_equalizer_vcc.h>
+#include <drm/ofdm_synchronizer_cc.h>
 #include <drm/scrambler_bb.h>
 #include "drm_global_constants.h"
 #include "drm_transm_params.h"
@@ -137,6 +138,7 @@ PYBIND11_MODULE(drm_python, m)
     BIND_BLOCK(cell_demapping_cc, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
     BIND_BLOCK(mlc_decoder_bb, gr::block, py::arg("tp"), py::arg("channel_type"), py::keep_alive<1, 2>());
     BIND_BLOCK(pilot_equalizer_vcc, gr::sync_block, py::arg("tp"), py::keep_alive<1, 2>());
+    BIND_BLOCK(ofdm_synchronizer_cc, gr::block, py::arg("nfft"), py::arg("ncp"));
     BIND_BLOCK(cell_mapping_cc, gr::block, py::arg("tp"), py::arg("input_sizes"), py::keep_alive<1, 2>());
     BIND_BLOCK(m3ufile_source_f, gr::sync_block, py::arg("filename"), py::arg("tp"), py::keep_alive<1, 3>());
 #undef BIND_BLOCK

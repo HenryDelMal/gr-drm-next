@@ -1,0 +1,23 @@
+id: drm_ofdm_synchronizer_cc
+label: DRM OFDM Synchronizer
+category: '[DRM] Receiver'
+flags: [python, cpp]
+templates:
+  imports: import drm
+  make: drm.ofdm_synchronizer_cc(${nfft}, ${ncp})
+parameters:
+- id: nfft
+  label: FFT length
+  dtype: int
+  default: '256'
+- id: ncp
+  label: Cyclic prefix length
+  dtype: int
+  default: '64'
+inputs:
+- domain: stream
+  dtype: complex
+outputs:
+- domain: stream
+  dtype: complex
+file_format: 1
