@@ -1,0 +1,26 @@
+id: drm_deinterleaver_cc
+label: DRM Cell Deinterleaver
+category: '[DRM] Receiver'
+flags: [python, cpp]
+templates:
+  imports: import drm
+  make: drm.deinterleaver_cc(${sequence}, ${long_interleaving}, ${depth})
+parameters:
+- id: sequence
+  label: Interleaving sequence
+  dtype: int_vector
+- id: long_interleaving
+  label: Long interleaving
+  dtype: bool
+  default: 'False'
+- id: depth
+  label: Depth
+  dtype: int
+  default: '1'
+inputs:
+- domain: stream
+  dtype: complex
+outputs:
+- domain: stream
+  dtype: complex
+file_format: 1

@@ -11,6 +11,8 @@
 #include <drm/generate_sdc_b.h>
 #include <drm/interleaver_bb.h>
 #include <drm/interleaver_cc.h>
+#include <drm/deinterleaver_bb.h>
+#include <drm/deinterleaver_cc.h>
 #include <drm/m3ufile_source_f.h>
 #include <drm/partitioning_bb.h>
 #include <drm/punct_bb.h>
@@ -121,6 +123,8 @@ PYBIND11_MODULE(drm_python, m)
                py::arg("vlen_in"), py::arg("vlen_out"), py::arg("num_tailbits"));
     BIND_BLOCK(interleaver_bb, gr::sync_block, py::arg("interl_seq"));
     BIND_BLOCK(interleaver_cc, gr::block, py::arg("interl_seq"), py::arg("long_interl"), py::arg("depth"));
+    BIND_BLOCK(deinterleaver_bb, gr::sync_block, py::arg("sequence"));
+    BIND_BLOCK(deinterleaver_cc, gr::block, py::arg("sequence"), py::arg("long_interleaving"), py::arg("depth"));
     BIND_BLOCK(partitioning_bb, gr::block, py::arg("vlen_in"), py::arg("vlen_out"));
     BIND_BLOCK(generate_fac_b, gr::sync_block, py::arg("tp"), py::keep_alive<1, 2>());
     BIND_BLOCK(generate_sdc_b, gr::sync_block, py::arg("tp"), py::keep_alive<1, 2>());
