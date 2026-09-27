@@ -10,5 +10,5 @@ install(FILES
     scrambler_bb.h audio_encoder_sb.h audio_decoder_sb.h ofdm_demodulator_cc.h cell_demapping_cc.h
     generate_fac_b.h generate_sdc_b.h add_tailbits_bb.h punct_bb.h
     interleaver_bb.h deinterleaver_bb.h interleaver_cc.h deinterleaver_cc.h partitioning_bb.h cell_mapping_cc.h
-    qam_map_bc.h qam_demapper_cb.h m3ufile_source_f.h
+    qam_map_bc.h qam_demapper_cb.h mlc_decoder_bb.h m3ufile_source_f.h
     DESTINATION include/drm)
