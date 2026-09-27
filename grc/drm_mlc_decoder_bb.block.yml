@@ -1,10 +1,10 @@
 id: drm_mlc_decoder_bb
 label: DRM MLC Decoder
-category: '[DRM] Receiver'
+category: '[DRM]/Receiver'
 flags: [python, cpp]
 templates:
-  imports: import drm
-  make: drm.mlc_decoder_bb(${tp}, ${channel_type})
+  imports: from drm.drm_python import mlc_decoder_bb
+  make: mlc_decoder_bb(${tp}, ${channel_type})
 parameters:
 - id: tp
   label: Transmission parameters

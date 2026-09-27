@@ -1,6 +1,6 @@
 id: cell_mapping_cc
 label: DRM Cell mapping
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

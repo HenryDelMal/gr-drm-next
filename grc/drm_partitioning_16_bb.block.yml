@@ -1,6 +1,6 @@
 id: drm_partitioning_16_bb
 label: DRM Partitioning 16-QAM EEP
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

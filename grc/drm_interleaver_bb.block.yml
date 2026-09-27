@@ -1,6 +1,6 @@
 id: drm_interleaver_bb
 label: Bit Interleaver
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

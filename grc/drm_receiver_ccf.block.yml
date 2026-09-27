@@ -1,10 +1,12 @@
 id: drm_receiver_ccf
 label: DRM Complete Audio Receiver
-category: '[DRM] Receiver'
+category: '[DRM]/Receiver'
 flags: [python]
 templates:
-  imports: import drm
-  make: drm.drm_receiver_ccf(${tp})
+  imports: |-
+    import drm
+    from drm.drm_receiver_ccf import drm_receiver_ccf
+  make: drm_receiver_ccf(${tp})
 parameters:
 - id: tp
   label: Transmission parameters

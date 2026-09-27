@@ -1,10 +1,10 @@
 id: drm_cell_demapping_cc
 label: DRM Cell Demapper
-category: '[DRM] Receiver'
+category: '[DRM]/Receiver'
 flags: [python, cpp]
 templates:
-  imports: import drm
-  make: drm.cell_demapping_cc(${tp})
+  imports: from drm.drm_python import cell_demapping_cc
+  make: cell_demapping_cc(${tp})
 parameters:
 - id: tp
   label: Transmission parameters

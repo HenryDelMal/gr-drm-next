@@ -1,6 +1,6 @@
 id: mlc_bc
 label: MLC Factory Block
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

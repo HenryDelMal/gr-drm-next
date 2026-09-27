@@ -1,6 +1,6 @@
 id: drm_add_tailbits_bb
 label: Add Tail Bits
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

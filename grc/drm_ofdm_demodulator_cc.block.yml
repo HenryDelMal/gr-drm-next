@@ -1,10 +1,10 @@
 id: drm_ofdm_demodulator_cc
 label: DRM OFDM Demodulator
-category: '[DRM] Receiver'
+category: '[DRM]/Receiver'
 flags: [python, cpp]
 templates:
-  imports: import drm
-  make: drm.ofdm_demodulator_cc(${nfft}, ${ncp}, ${fft_shift})
+  imports: from drm.drm_python import ofdm_demodulator_cc
+  make: ofdm_demodulator_cc(${nfft}, ${ncp}, ${fft_shift})
 parameters:
 - id: nfft
   label: FFT length

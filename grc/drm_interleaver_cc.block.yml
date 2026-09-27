@@ -1,6 +1,6 @@
 id: drm_interleaver_cc
 label: Cell Interleaver
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

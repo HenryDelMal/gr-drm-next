@@ -1,10 +1,10 @@
 id: drm_ofdm_synchronizer_cc
 label: DRM OFDM Synchronizer
-category: '[DRM] Receiver'
+category: '[DRM]/Receiver'
 flags: [python, cpp]
 templates:
-  imports: import drm
-  make: drm.ofdm_synchronizer_cc(${nfft}, ${ncp})
+  imports: from drm.drm_python import ofdm_synchronizer_cc
+  make: ofdm_synchronizer_cc(${nfft}, ${ncp})
 parameters:
 - id: nfft
   label: FFT length

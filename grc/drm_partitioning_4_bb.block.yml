@@ -1,6 +1,6 @@
 id: drm_partitioning_4_bb
 label: DRM Partitioning 4-QAM EEP
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

@@ -1,10 +1,12 @@
 id: drm_channel_receiver_ccb
 label: DRM Complete Channel Receiver
-category: '[DRM] Receiver'
+category: '[DRM]/Receiver'
 flags: [python]
 templates:
-  imports: import drm
-  make: drm.drm_channel_receiver_ccb(${tp})
+  imports: |-
+    import drm
+    from drm.drm_receiver_ccf import drm_channel_receiver_ccb
+  make: drm_channel_receiver_ccb(${tp})
 parameters:
 - id: tp
   label: Transmission parameters

@@ -1,6 +1,6 @@
 id: drm_generate_fac_b
 label: FAC Generator
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

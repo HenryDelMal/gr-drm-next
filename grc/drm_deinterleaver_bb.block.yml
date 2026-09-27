@@ -1,10 +1,10 @@
 id: drm_deinterleaver_bb
 label: DRM Bit Deinterleaver
-category: '[DRM] Receiver'
+category: '[DRM]/Receiver'
 flags: [python, cpp]
 templates:
-  imports: import drm
-  make: drm.deinterleaver_bb(${sequence})
+  imports: from drm.drm_python import deinterleaver_bb
+  make: deinterleaver_bb(${sequence})
 parameters:
 - id: sequence
   label: Interleaving sequence

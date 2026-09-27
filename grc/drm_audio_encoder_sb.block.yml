@@ -1,6 +1,6 @@
 id: drm_audio_encoder_sb
 label: Audio Encoder
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

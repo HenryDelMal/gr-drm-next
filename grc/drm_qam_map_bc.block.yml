@@ -1,6 +1,6 @@
 id: drm_qam_map_bc
 label: DRM QAM Mapping
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

@@ -1,6 +1,6 @@
 id: drm_punct_bb
 label: Puncturing
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

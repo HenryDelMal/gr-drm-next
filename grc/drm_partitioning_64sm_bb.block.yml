@@ -1,6 +1,6 @@
 id: drm_partitioning_64sm_bb
 label: DRM Partitioning 64-QAM SM EEP
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:

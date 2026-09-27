@@ -1,6 +1,6 @@
 id: drm_generate_sdc_b
 label: SDC Generator
-category: '[DRM]'
+category: '[DRM]/Transmitter'
 flags:
 - python
 templates:
