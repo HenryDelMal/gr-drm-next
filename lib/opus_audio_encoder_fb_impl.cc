@@ -12,12 +12,57 @@
 
 namespace gr { namespace drm {
 
-opus_audio_encoder_fb::sptr opus_audio_encoder_fb::make(transm_params* tp)
+namespace {
+
+int opus_application(const std::string& value)
 {
-    return gnuradio::make_block_sptr<opus_audio_encoder_fb_impl>(tp);
+    if (value == "audio") return OPUS_APPLICATION_AUDIO;
+    if (value == "voip") return OPUS_APPLICATION_VOIP;
+    if (value == "lowdelay") return OPUS_APPLICATION_RESTRICTED_LOWDELAY;
+    throw std::invalid_argument("Opus application must be audio, voip, or lowdelay");
 }
 
-opus_audio_encoder_fb_impl::opus_audio_encoder_fb_impl(transm_params* tp)
+int opus_signal(const std::string& value)
+{
+    if (value == "auto") return OPUS_AUTO;
+    if (value == "music") return OPUS_SIGNAL_MUSIC;
+    if (value == "voice") return OPUS_SIGNAL_VOICE;
+    throw std::invalid_argument("Opus signal must be auto, music, or voice");
+}
+
+int opus_bandwidth(const std::string& value)
+{
+    if (value == "auto") return OPUS_AUTO;
+    if (value == "narrowband") return OPUS_BANDWIDTH_NARROWBAND;
+    if (value == "mediumband") return OPUS_BANDWIDTH_MEDIUMBAND;
+    if (value == "wideband") return OPUS_BANDWIDTH_WIDEBAND;
+    if (value == "superwideband") return OPUS_BANDWIDTH_SUPERWIDEBAND;
+    if (value == "fullband") return OPUS_BANDWIDTH_FULLBAND;
+    throw std::invalid_argument(
+        "Opus bandwidth must be auto, narrowband, mediumband, wideband, "
+        "superwideband, or fullband");
+}
+
+void check_ctl(int result, const char* setting)
+{
+    if (result != OPUS_OK)
+        throw std::runtime_error(std::string("Unable to set Opus ") + setting + ": " +
+                                 opus_strerror(result));
+}
+
+} // namespace
+
+opus_audio_encoder_fb::sptr opus_audio_encoder_fb::make(
+    transm_params* tp, int bitrate, bool vbr, const std::string& application,
+    const std::string& signal, const std::string& bandwidth, int complexity, bool dtx)
+{
+    return gnuradio::make_block_sptr<opus_audio_encoder_fb_impl>(
+        tp, bitrate, vbr, application, signal, bandwidth, complexity, dtx);
+}
+
+opus_audio_encoder_fb_impl::opus_audio_encoder_fb_impl(
+    transm_params* tp, int bitrate, bool vbr, const std::string& application,
+    const std::string& signal, const std::string& bandwidth, int complexity, bool dtx)
     : gr::block("opus_audio_encoder_fb",
                 gr::io_signature::make(1, 1, sizeof(float)),
                 gr::io_signature::make(1, 1, sizeof(unsigned char))),
@@ -40,17 +85,40 @@ opus_audio_encoder_fb_impl::opus_audio_encoder_fb_impl(transm_params* tp)
     if (d_packet_bytes == 0 || d_packet_bytes * frames_per_superframe > 4095)
         throw std::invalid_argument("MSC multiplex cannot represent Opus packet borders");
 
+    const int maximum_bitrate = static_cast<int>(d_packet_bytes * 8 * 50);
+    if (bitrate == 0) bitrate = maximum_bitrate;
+    if (bitrate < 500 || bitrate > maximum_bitrate)
+        throw std::invalid_argument("Opus bitrate must be between 500 and " +
+                                    std::to_string(maximum_bitrate) +
+                                    " bit/s for this MSC configuration");
+    if (complexity < 0 || complexity > 10)
+        throw std::invalid_argument("Opus complexity must be between 0 and 10");
+
+    const int application_value = opus_application(application);
+    const int signal_value = opus_signal(signal);
+    const int bandwidth_value = opus_bandwidth(bandwidth);
     int error = OPUS_OK;
-    d_encoder = opus_encoder_create(d_sample_rate, 1, OPUS_APPLICATION_AUDIO, &error);
+    d_encoder = opus_encoder_create(d_sample_rate, 1, application_value, &error);
     if (!d_encoder || error != OPUS_OK)
         throw std::runtime_error(std::string("Opus encoder initialization failed: ") +
                                  opus_strerror(error));
 
-    const int bitrate = static_cast<int>(d_packet_bytes * 8 * 50);
-    if (opus_encoder_ctl(d_encoder, OPUS_SET_BITRATE(bitrate)) != OPUS_OK ||
-        opus_encoder_ctl(d_encoder, OPUS_SET_VBR(0)) != OPUS_OK ||
-        opus_encoder_ctl(d_encoder, OPUS_SET_DTX(0)) != OPUS_OK)
-        throw std::runtime_error("Opus encoder configuration failed");
+    try {
+        check_ctl(opus_encoder_ctl(d_encoder, OPUS_SET_BITRATE(bitrate)), "bitrate");
+        check_ctl(opus_encoder_ctl(d_encoder, OPUS_SET_VBR(vbr ? 1 : 0)), "VBR mode");
+        check_ctl(opus_encoder_ctl(d_encoder, OPUS_SET_SIGNAL(signal_value)), "signal");
+        if (bandwidth_value != OPUS_AUTO)
+            check_ctl(opus_encoder_ctl(d_encoder,
+                                       OPUS_SET_MAX_BANDWIDTH(bandwidth_value)),
+                      "maximum bandwidth");
+        check_ctl(opus_encoder_ctl(d_encoder, OPUS_SET_COMPLEXITY(complexity)),
+                  "complexity");
+        check_ctl(opus_encoder_ctl(d_encoder, OPUS_SET_DTX(dtx ? 1 : 0)), "DTX mode");
+    } catch (...) {
+        opus_encoder_destroy(d_encoder);
+        d_encoder = nullptr;
+        throw;
+    }
 
     set_output_multiple(d_l_mux);
 }

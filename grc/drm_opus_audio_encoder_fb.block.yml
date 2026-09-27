@@ -4,11 +4,45 @@ category: '[DRM]/Transmitter'
 flags: [python, cpp]
 templates:
   imports: import drm_next as drm
-  make: drm.opus_audio_encoder_fb(${tp})
+  make: drm.opus_audio_encoder_fb(${tp}, ${bitrate}, ${vbr}, ${application}, ${signal}, ${bandwidth}, ${complexity}, ${dtx})
 parameters:
 - id: tp
   label: Transmission parameters
   dtype: raw
+- id: bitrate
+  label: Bitrate (bit/s, 0 = maximum)
+  dtype: int
+  default: '0'
+- id: vbr
+  label: Variable bitrate
+  dtype: bool
+  default: 'False'
+- id: application
+  label: Application
+  dtype: enum
+  default: '"audio"'
+  options: ['"audio"', '"voip"', '"lowdelay"']
+  option_labels: [Audio, VoIP, Restricted low-delay]
+- id: signal
+  label: Signal type
+  dtype: enum
+  default: '"music"'
+  options: ['"auto"', '"music"', '"voice"']
+  option_labels: [Automatic, Music, Voice]
+- id: bandwidth
+  label: Maximum bandwidth
+  dtype: enum
+  default: '"auto"'
+  options: ['"auto"', '"narrowband"', '"mediumband"', '"wideband"', '"superwideband"', '"fullband"']
+  option_labels: [Automatic, Narrowband, Mediumband, Wideband, Super-wideband, Fullband]
+- id: complexity
+  label: Complexity (0-10)
+  dtype: int
+  default: '10'
+- id: dtx
+  label: Discontinuous transmission
+  dtype: bool
+  default: 'False'
 inputs:
 - domain: stream
   dtype: float
@@ -18,4 +52,6 @@ outputs:
 documentation: |-
   Experimental DReaM-inspired Opus extension. This is not part of the ETSI DRM standard.
   Input is mono PCM at the sample rate configured in the transmission parameters.
+  Bitrate 0 selects the highest rate that fits the configured MSC multiplex. For the
+  default loopback this is 13200 bit/s. A higher value is rejected instead of truncating packets.
 file_format: 1

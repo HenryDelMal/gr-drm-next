@@ -33,6 +33,15 @@ class qa_opus_audio_loopback(gr_unittest.TestCase):
         rms = math.sqrt(sum(sample * sample for sample in decoded) / len(decoded))
         self.assertGreater(rms, 0.01)
 
+    def test_custom_encoder_parameters(self):
+        tp = drm.transm_params(1, 3, False, 0, 1, 0, 1, 1, 0, False,
+                               24000, "gr-drm-next", "")
+        encoder = drm.opus_audio_encoder_fb(
+            tp, 8000, True, "voip", "voice", "wideband", 5, True)
+        self.assertIsNotNone(encoder)
+        with self.assertRaises(ValueError):
+            drm.opus_audio_encoder_fb(tp, 64000)
+
 
 if __name__ == '__main__':
     gr_unittest.run(qa_opus_audio_loopback)

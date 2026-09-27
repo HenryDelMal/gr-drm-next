@@ -4,6 +4,7 @@
 
 #include <drm/api.h>
 #include <gnuradio/block.h>
+#include <string>
 #include "drm_transm_params.h"
 
 namespace gr { namespace drm {
@@ -18,7 +19,14 @@ class DRM_API opus_audio_encoder_fb : virtual public gr::block
 {
 public:
     using sptr = std::shared_ptr<opus_audio_encoder_fb>;
-    static sptr make(transm_params* tp);
+    static sptr make(transm_params* tp,
+                     int bitrate = 0,
+                     bool vbr = false,
+                     const std::string& application = "audio",
+                     const std::string& signal = "music",
+                     const std::string& bandwidth = "auto",
+                     int complexity = 10,
+                     bool dtx = false);
 };
 
 } }

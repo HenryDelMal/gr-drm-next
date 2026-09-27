@@ -22,7 +22,14 @@ class opus_audio_encoder_fb_impl : public opus_audio_encoder_fb
                            unsigned int value, unsigned int count);
 
 public:
-    explicit opus_audio_encoder_fb_impl(transm_params* tp);
+    opus_audio_encoder_fb_impl(transm_params* tp,
+                               int bitrate,
+                               bool vbr,
+                               const std::string& application,
+                               const std::string& signal,
+                               const std::string& bandwidth,
+                               int complexity,
+                               bool dtx);
     ~opus_audio_encoder_fb_impl() override;
     void forecast(int noutput_items, gr_vector_int& required) override;
     int general_work(int noutput_items, gr_vector_int& ninput_items,

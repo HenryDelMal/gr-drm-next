@@ -135,7 +135,11 @@ PYBIND11_MODULE(drm_python, m)
     BIND_BLOCK(generate_sdc_b, gr::sync_block, py::arg("tp"), py::keep_alive<1, 2>());
     BIND_BLOCK(audio_encoder_sb, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
     BIND_BLOCK(audio_decoder_sb, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
-    BIND_BLOCK(opus_audio_encoder_fb, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
+    BIND_BLOCK(opus_audio_encoder_fb, gr::block,
+               py::arg("tp"), py::arg("bitrate") = 0, py::arg("vbr") = false,
+               py::arg("application") = "audio", py::arg("signal") = "music",
+               py::arg("bandwidth") = "auto", py::arg("complexity") = 10,
+               py::arg("dtx") = false, py::keep_alive<1, 2>());
     BIND_BLOCK(opus_audio_decoder_bf, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
     BIND_BLOCK(ofdm_demodulator_cc, gr::block, py::arg("nfft"), py::arg("ncp"),
                py::arg("fft_shift") = true);
