@@ -3,6 +3,11 @@ GR-DRM
 
 A SOFTWARE DRM/DRM+ TRANSMITTER FOR GNU RADIO
 
+This checkout is the `gr-drm-next` development line: a GNU Radio 3.10 DRM
+encoder/receiver project. It retains the existing `drm` module name for
+flowgraph compatibility while receiver blocks are developed alongside the
+transmitter.
+
 Contents
 --------
 
@@ -20,11 +25,13 @@ Contents
 Installation
 ------------
 
-Dependencies: GNU Radio 3.10 or newer, Python 3, pybind11, and FAAC.
+Dependencies: GNU Radio 3.10 or newer, Python 3, pybind11, FAAC, and FAAD2.
 
 FAAC remains the audio encoder used by the transmitter. Both the legacy
 `faacEnc*` API and the FAAC 2.1 API are supported. The encoder is configured
 for raw MPEG-4 AAC-LC output, preserving the existing DRM audio framing.
+FAAD2 is used by the DRM AAC decoder block. FAAD2 is a system dependency and
+is intentionally not bundled with this project.
 
 From Source (manual)
 ====================

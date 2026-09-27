@@ -1,0 +1,13 @@
+# Locate FAAD2 without bundling it in this project.
+find_library(Faad_LIBRARY NAMES faad faad2 HINTS ENV FAAD_ROOT PATH_SUFFIXES lib)
+if(Faad_LIBRARY)
+  get_filename_component(_Faad_REAL_LIBRARY "${Faad_LIBRARY}" REALPATH)
+  get_filename_component(_Faad_LIBDIR "${_Faad_REAL_LIBRARY}" DIRECTORY)
+  get_filename_component(_Faad_PREFIX "${_Faad_LIBDIR}" DIRECTORY)
+  find_path(Faad_INCLUDE_DIR neaacdec.h HINTS "${_Faad_PREFIX}/include" NO_DEFAULT_PATH)
+endif()
+find_path(Faad_INCLUDE_DIR neaacdec.h HINTS ENV FAAD_ROOT PATH_SUFFIXES include)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Faad REQUIRED_VARS Faad_LIBRARY Faad_INCLUDE_DIR)
+set(Faad_LIBRARIES ${Faad_LIBRARY})
+mark_as_advanced(Faad_LIBRARY Faad_INCLUDE_DIR)
