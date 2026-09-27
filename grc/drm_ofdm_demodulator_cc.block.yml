@@ -1,0 +1,26 @@
+id: drm_ofdm_demodulator_cc
+label: DRM OFDM Demodulator
+category: '[DRM] Receiver'
+flags: [python, cpp]
+templates:
+  imports: import drm
+  make: drm.ofdm_demodulator_cc(${nfft}, ${ncp}, ${fft_shift})
+parameters:
+- id: nfft
+  label: FFT length
+  dtype: int
+- id: ncp
+  label: Cyclic prefix length
+  dtype: int
+- id: fft_shift
+  label: Shift FFT bins
+  dtype: bool
+  default: 'True'
+inputs:
+- domain: stream
+  dtype: complex
+outputs:
+- domain: stream
+  dtype: complex
+  vlen: ${nfft}
+file_format: 1

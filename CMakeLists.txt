@@ -5,7 +5,7 @@ project(gr-drm VERSION 0.1.0 LANGUAGES C CXX)
 enable_testing()
 
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake/Modules)
-find_package(Gnuradio "3.10" REQUIRED COMPONENTS runtime)
+find_package(Gnuradio "3.10" REQUIRED COMPONENTS runtime fft)
 find_package(Faac REQUIRED)
 find_package(Faad REQUIRED)
 

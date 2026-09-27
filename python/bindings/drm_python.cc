@@ -4,6 +4,7 @@
 #include <drm/add_tailbits_bb.h>
 #include <drm/audio_encoder_sb.h>
 #include <drm/audio_decoder_sb.h>
+#include <drm/ofdm_demodulator_cc.h>
 #include <drm/cell_mapping_cc.h>
 #include <drm/generate_fac_b.h>
 #include <drm/generate_sdc_b.h>
@@ -123,6 +124,8 @@ PYBIND11_MODULE(drm_python, m)
     BIND_BLOCK(generate_sdc_b, gr::sync_block, py::arg("tp"), py::keep_alive<1, 2>());
     BIND_BLOCK(audio_encoder_sb, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
     BIND_BLOCK(audio_decoder_sb, gr::block, py::arg("tp"), py::keep_alive<1, 2>());
+    BIND_BLOCK(ofdm_demodulator_cc, gr::block, py::arg("nfft"), py::arg("ncp"),
+               py::arg("fft_shift") = true);
     BIND_BLOCK(cell_mapping_cc, gr::block, py::arg("tp"), py::arg("input_sizes"), py::keep_alive<1, 2>());
     BIND_BLOCK(m3ufile_source_f, gr::sync_block, py::arg("filename"), py::arg("tp"), py::keep_alive<1, 3>());
 #undef BIND_BLOCK

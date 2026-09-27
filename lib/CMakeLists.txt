@@ -1,7 +1,7 @@
 set(drm_sources
     drm_util.cc drm_transm_params.cc drm_params.cc drm_config.cc
     drm_tables_mapping.cc drm_tables_params.cc scrambler_bb_impl.cc
-    audio_encoder_sb_impl.cc audio_decoder_sb_impl.cc generate_fac_b_impl.cc generate_sdc_b_impl.cc
+    audio_encoder_sb_impl.cc audio_decoder_sb_impl.cc ofdm_demodulator_cc_impl.cc generate_fac_b_impl.cc generate_sdc_b_impl.cc
     add_tailbits_bb_impl.cc punct_bb_impl.cc interleaver_bb_impl.cc
     interleaver_cc_impl.cc partitioning_bb_impl.cc cell_mapping_cc_impl.cc
     qam_map_bc_impl.cc m3ufile_source_f_impl.cc wavfile_drm.cc)
@@ -16,7 +16,7 @@ target_compile_options(gnuradio-drm PRIVATE "-I${Faac_INCLUDE_DIR}")
 target_include_directories(gnuradio-drm BEFORE PRIVATE ${Faad_INCLUDE_DIR})
 target_compile_options(gnuradio-drm PRIVATE "-I${Faad_INCLUDE_DIR}")
 target_link_libraries(gnuradio-drm
-    PUBLIC gnuradio::gnuradio-runtime
+    PUBLIC gnuradio::gnuradio-runtime gnuradio::gnuradio-fft
     PRIVATE ${Faac_LIBRARIES} ${Faad_LIBRARIES})
 set_target_properties(gnuradio-drm PROPERTIES DEFINE_SYMBOL "gnuradio_drm_EXPORTS")
 target_compile_definitions(gnuradio-drm PRIVATE HAVE_CONFIG_H)
