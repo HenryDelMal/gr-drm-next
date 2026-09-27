@@ -1,0 +1,20 @@
+id: drm_pilot_equalizer_vcc
+label: DRM Pilot Equalizer
+category: '[DRM] Receiver'
+flags: [python, cpp]
+templates:
+  imports: import drm
+  make: drm.pilot_equalizer_vcc(${tp})
+parameters:
+- id: tp
+  label: Transmission parameters
+  dtype: raw
+inputs:
+- domain: stream
+  dtype: complex
+  vlen: ${tp.ofdm().nfft()}
+outputs:
+- domain: stream
+  dtype: complex
+  vlen: ${tp.ofdm().nfft()}
+file_format: 1

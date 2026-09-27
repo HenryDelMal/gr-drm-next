@@ -4,7 +4,8 @@ set(drm_sources
     audio_encoder_sb_impl.cc audio_decoder_sb_impl.cc ofdm_demodulator_cc_impl.cc cell_demapping_cc_impl.cc generate_fac_b_impl.cc generate_sdc_b_impl.cc
     add_tailbits_bb_impl.cc punct_bb_impl.cc interleaver_bb_impl.cc deinterleaver_bb_impl.cc
     interleaver_cc_impl.cc deinterleaver_cc_impl.cc partitioning_bb_impl.cc cell_mapping_cc_impl.cc
-    qam_map_bc_impl.cc qam_demapper_cb_impl.cc mlc_decoder_bb_impl.cc m3ufile_source_f_impl.cc wavfile_drm.cc)
+    qam_map_bc_impl.cc qam_demapper_cb_impl.cc mlc_decoder_bb_impl.cc
+    pilot_equalizer_vcc_impl.cc m3ufile_source_f_impl.cc wavfile_drm.cc)
 
 add_library(gnuradio-drm SHARED ${drm_sources})
 target_include_directories(gnuradio-drm
