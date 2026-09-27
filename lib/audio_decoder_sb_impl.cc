@@ -5,6 +5,7 @@
 #include "audio_decoder_sb_impl.h"
 #include <algorithm>
 #include <cstring>
+#include <dlfcn.h>
 #include <stdexcept>
 
 namespace gr { namespace drm {
@@ -28,8 +29,18 @@ audio_decoder_sb_impl::audio_decoder_sb_impl(transm_params* tp)
     d_decoder = NeAACDecOpen();
     if (!d_decoder)
         throw std::runtime_error("FAAD2 decoder could not be opened");
+    using init_drm_fn = char (*)(NeAACDecHandle*, unsigned long, unsigned char);
+    const auto init_drm = reinterpret_cast<init_drm_fn>(
+        dlsym(RTLD_DEFAULT, "NeAACDecInitDRM"));
+    if (!init_drm)
+        throw std::runtime_error("FAAD2 was built without DRM decoder support");
+    if (init_drm(&d_decoder, d_sample_rate, DRMCH_MONO) != 0)
+        throw std::runtime_error("FAAD2 DRM decoder initialization failed");
     auto* cfg = NeAACDecGetCurrentConfiguration(d_decoder);
-    cfg->defObjectType = DRM_ER_LC;
+    // InitDRM installs DRM_ER_LC in the active decoder.  The generic
+    // configuration validator intentionally rejects that special object
+    // type, so use an ordinary value only while updating output options.
+    cfg->defObjectType = LC;
     cfg->defSampleRate = d_sample_rate;
     cfg->outputFormat = FAAD_FMT_FLOAT;
     cfg->dontUpSampleImplicitSBR = 1;
