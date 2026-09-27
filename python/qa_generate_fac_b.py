@@ -53,7 +53,7 @@ class qa_generate_fac_b (gr_unittest.TestCase):
                 0,0,1,0,0,0,1,1,0,1,0,0,0,1,0,1,0,0,0,0,1,1,1,0,0,0,0,1, \
                 1,0,0,0,0,0,0,0,1,0,1,0,1,0,1,0)
         # check data
-        self.assertTupleEqual(res, ref)
+        self.assertTupleEqual(tuple(res), ref)
 
 
 if __name__ == '__main__':

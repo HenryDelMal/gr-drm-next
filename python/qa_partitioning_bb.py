@@ -52,9 +52,9 @@ class qa_partitioning_bb (gr_unittest.TestCase):
         ref1 = (1,2,1,2)
         ref2 = (3,4,5,3,4,5)
         ref3 = (6,7,8,9,6,7,8,9)
-        self.assertTupleEqual(res1, ref1)
-        self.assertTupleEqual(res2, ref2)
-        self.assertTupleEqual(res3, ref3)
+        self.assertTupleEqual(tuple(res1), ref1)
+        self.assertTupleEqual(tuple(res2), ref2)
+        self.assertTupleEqual(tuple(res3), ref3)
 
 
 if __name__ == '__main__':

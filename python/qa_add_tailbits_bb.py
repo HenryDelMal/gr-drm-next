@@ -41,7 +41,7 @@ class qa_add_tailbits_bb (gr_unittest.TestCase):
         # set up fg
         self.tb.run ()
         # check data
-        self.assertTupleEqual(self.snk.data(), (1,1,0,1,0,0,1,1,0,1,0,0,1,1,0,1,0,0))
+        self.assertTupleEqual(tuple(self.snk.data()), (1,1,0,1,0,0,1,1,0,1,0,0,1,1,0,1,0,0))
 
 
 if __name__ == '__main__':

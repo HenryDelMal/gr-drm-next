@@ -44,7 +44,7 @@ class qa_interleaver_bb (gr_unittest.TestCase):
         # check data
         res = self.snk.data()
         ref = (3,7,5,8,6,1,9,4,2,0,3,7,5,8,6,1,9,4,2,0)
-        self.assertTupleEqual(res, ref)
+        self.assertTupleEqual(tuple(res), ref)
 
 if __name__ == '__main__':
     gr_unittest.run(qa_interleaver_bb, "qa_interleaver_bb.xml")

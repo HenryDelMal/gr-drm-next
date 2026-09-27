@@ -43,7 +43,7 @@ class qa_punct_bb (gr_unittest.TestCase):
         self.tb.run ()
         # check data
         res = self.snk.data()
-        self.assertTupleEqual(res, (1,0,1,1,0,0,1,1,1,0,1,1,0,1,1,0,0,1,1,1,0,1))
+        self.assertTupleEqual(tuple(res), (1,0,1,1,0,0,1,1,1,0,1,1,0,1,1,0,0,1,1,1,0,1))
 
 if __name__ == '__main__':
     gr_unittest.run(qa_punct_bb, "qa_punct_bb.xml")

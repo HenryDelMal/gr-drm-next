@@ -43,7 +43,7 @@ class qa_scrambler_bb (gr_unittest.TestCase):
         res = self.snk.data()
         ref = (0,0,0,0,0,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,1,1,1,1,0,0)
         # check data
-        self.assertTupleEqual(res, ref)
+        self.assertTupleEqual(tuple(res), ref)
 
 if __name__ == '__main__':
     gr_unittest.run(qa_scrambler_bb, "qa_scrambler_bb.xml")
