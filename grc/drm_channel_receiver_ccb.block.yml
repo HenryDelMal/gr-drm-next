@@ -1,0 +1,19 @@
+id: drm_channel_receiver_ccb
+label: DRM Complete Channel Receiver
+category: '[DRM] Receiver'
+flags: [python]
+templates:
+  imports: import drm
+  make: drm.drm_channel_receiver_ccb(${tp})
+parameters:
+- id: tp
+  label: Transmission parameters
+  dtype: raw
+inputs:
+- domain: stream
+  dtype: complex
+outputs:
+- domain: stream
+  dtype: byte
+  vlen: ${tp.msc().L_MUX()}
+file_format: 1

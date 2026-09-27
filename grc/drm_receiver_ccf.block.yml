@@ -1,0 +1,18 @@
+id: drm_receiver_ccf
+label: DRM Complete Audio Receiver
+category: '[DRM] Receiver'
+flags: [python]
+templates:
+  imports: import drm
+  make: drm.drm_receiver_ccf(${tp})
+parameters:
+- id: tp
+  label: Transmission parameters
+  dtype: raw
+inputs:
+- domain: stream
+  dtype: complex
+outputs:
+- domain: stream
+  dtype: float
+file_format: 1
