@@ -52,6 +52,12 @@ by the selected prefix.
 Usage
 -----
 
+The `examples/drm_audio_loopback.grc` flowgraph connects the existing FAAC
+encoder to the FAAD2 decoder through a vectorized DRM MSC frame and plays the
+recovered PCM through GNU Radio's Audio Sink. It is a perfect audio-path test;
+it intentionally bypasses OFDM synchronization, channel estimation, and MLC
+decoding.
+
 After successful installation of gr-drm, you can either use the flow graph
 in `apps/grc_flowgraph` or the GUI in `apps/gui`. The DRM+ flow graph is 
 completely untested due to the lack of a receiver.
