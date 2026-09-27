@@ -1,0 +1,36 @@
+id: drm_opus_auto_receiver_ccf
+label: Opus Receiver with FAC Mapping Detection
+category: '[DRM]/Receiver'
+flags: [python]
+templates:
+  imports: import drm_next as drm
+  make: drm.drm_opus_auto_receiver_ccf(${rm}, ${so}, ${msc_protection}, ${audio_sample_rate})
+parameters:
+- id: rm
+  label: Bootstrap robustness mode
+  dtype: int
+  default: '1'
+- id: so
+  label: Bootstrap spectrum occupancy
+  dtype: int
+  default: '3'
+- id: msc_protection
+  label: Bootstrap MSC protection level
+  dtype: int
+  default: '1'
+- id: audio_sample_rate
+  label: Audio sample rate
+  dtype: int
+  default: '24000'
+inputs:
+- domain: stream
+  dtype: complex
+outputs:
+- domain: stream
+  dtype: float
+documentation: |-
+  Experimental Opus receiver that reads MSC and SDC mapping from valid FAC frames.
+  The receiver does not share a transmission-parameter object with the transmitter.
+  Robustness mode, spectrum occupancy, protection level, and audio sample rate remain
+  bootstrap parameters. FAC selects MSC/SDC mapping and interleaver depth at runtime.
+file_format: 1

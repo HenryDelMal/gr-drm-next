@@ -3,7 +3,7 @@ add_subdirectory(bindings)
 
 gr_python_install(FILES
     __init__.py mlc_factory.py drm_mlc_4qam_bc.py drm_mlc_16qam_bc.py
-    drm_mlc_64qam_sm_bc.py drm_receiver_ccf.py
+    drm_mlc_64qam_sm_bc.py drm_receiver_ccf.py drm_opus_auto_receiver.py
     DESTINATION ${GR_PYTHON_DIR}/drm_next)
 
 add_custom_target(copy_module_for_tests ALL

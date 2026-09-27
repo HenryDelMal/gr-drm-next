@@ -4,6 +4,7 @@ import math
 
 from gnuradio import blocks, gr, gr_unittest
 import drm_next as drm
+from drm_next.drm_opus_auto_receiver import _fac_crc_valid
 
 
 class qa_opus_audio_loopback(gr_unittest.TestCase):
@@ -41,6 +42,26 @@ class qa_opus_audio_loopback(gr_unittest.TestCase):
         self.assertIsNotNone(encoder)
         with self.assertRaises(ValueError):
             drm.opus_audio_encoder_fb(tp, 64000)
+
+    def test_fac_mapping_detection_input(self):
+        tp = drm.transm_params(1, 3, False, 0, 2, 0, 0, 0, 0, True,
+                               24000, "transmitter", "")
+        source = drm.generate_fac_b(tp)
+        head = blocks.head(gr.sizeof_char, tp.fac().L())
+        sink = blocks.vector_sink_b()
+        self.tb.connect(source, head, sink)
+        self.tb.run()
+        bits = sink.data()
+        self.assertTrue(_fac_crc_valid(bits))
+        self.assertEqual(tuple(bits[8:10]), (0, 0))  # MSC 64-QAM SM
+        self.assertEqual(bits[10], 0)                # SDC 16-QAM
+        self.assertEqual(bits[7], 0)                 # long interleaving
+
+    def test_independent_auto_receiver_constructs(self):
+        receiver = drm.drm_opus_auto_receiver_ccf(1, 3, 0, 24000)
+        self.assertIsNotNone(receiver)
+        self.assertEqual(len(receiver.msc_blocks), 4)
+        self.assertEqual(len(receiver.sdc_blocks), 2)
 
 
 if __name__ == '__main__':
