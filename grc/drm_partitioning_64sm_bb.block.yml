@@ -4,7 +4,7 @@ category: '[DRM]/Transmitter'
 flags:
 - python
 templates:
-  imports: import drm
+  imports: import drm_next as drm
   make: drm.partitioning_bb(${vlen_in}, ${vlen_out})
 parameters:
 - id: vlen_in

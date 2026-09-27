@@ -21,7 +21,7 @@
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
-import drm
+import drm_next as drm
 
 class qa_add_tailbits_bb (gr_unittest.TestCase):
 

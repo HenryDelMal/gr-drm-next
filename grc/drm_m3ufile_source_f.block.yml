@@ -4,7 +4,7 @@ category: '[DRM]'
 flags:
 - python
 templates:
-  imports: import drm
+  imports: import drm_next as drm
   make: drm.m3ufile_source_f(${filename}, ${tp})
 parameters:
 - id: filename

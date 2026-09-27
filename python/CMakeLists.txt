@@ -4,11 +4,11 @@ add_subdirectory(bindings)
 gr_python_install(FILES
     __init__.py mlc_factory.py drm_mlc_4qam_bc.py drm_mlc_16qam_bc.py
     drm_mlc_64qam_sm_bc.py drm_receiver_ccf.py
-    DESTINATION ${GR_PYTHON_DIR}/drm)
+    DESTINATION ${GR_PYTHON_DIR}/drm_next)
 
 add_custom_target(copy_module_for_tests ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}
-            ${PROJECT_BINARY_DIR}/test_modules/drm/)
+            ${PROJECT_BINARY_DIR}/test_modules/drm_next/)
 
 include(GrTest)
 set(GR_TEST_TARGET_DEPS gnuradio-drm drm_python copy_module_for_tests)

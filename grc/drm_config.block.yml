@@ -4,7 +4,7 @@ category: '[DRM]'
 flags: [show_id, python]
 value: ${ drm.transm_params(int(RM), int(SO), False, 0, int(msc_mapping), 0, int(msc_prot_level_2_16) if int(msc_mapping) == 1 else int(msc_prot_level_2_64), int(sdc_mapping), 0, str(long_interl) == 'True', int(audio_sample_rate), station_label, text_message) }
 templates:
-  imports: import drm
+  imports: import drm_next as drm
   var_make: self.${id} = ${id} = drm.transm_params(${RM}, ${SO}, False, 0, ${msc_mapping}, 0, ${msc_prot_level_2_16 if int(msc_mapping) == 1 else msc_prot_level_2_64}, ${sdc_mapping}, 0, ${long_interl}, ${audio_sample_rate}, ${station_label}, ${text_message})
 parameters:
 - id: RM

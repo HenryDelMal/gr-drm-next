@@ -1,7 +1,7 @@
 """Complete fixed-configuration DRM receive chain for GNU Radio 3.10."""
 
 from gnuradio import blocks, gr
-import drm
+import drm_next as drm
 
 
 class drm_channel_receiver_ccb(gr.hier_block2):

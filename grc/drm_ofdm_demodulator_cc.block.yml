@@ -3,7 +3,7 @@ label: DRM OFDM Demodulator
 category: '[DRM]/Receiver'
 flags: [python, cpp]
 templates:
-  imports: from drm.drm_python import ofdm_demodulator_cc
+  imports: from drm_next.drm_python import ofdm_demodulator_cc
   make: ofdm_demodulator_cc(${nfft}, ${ncp}, ${fft_shift})
 parameters:
 - id: nfft

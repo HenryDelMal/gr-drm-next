@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from gnuradio import blocks, gr, gr_unittest
-import drm
+import drm_next as drm
 
 
 class qa_ofdm_synchronizer_cc(gr_unittest.TestCase):

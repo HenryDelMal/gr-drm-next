@@ -21,7 +21,7 @@
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
-import drm
+import drm_next as drm
 
 class qa_m3ufile_source_f (gr_unittest.TestCase):
 

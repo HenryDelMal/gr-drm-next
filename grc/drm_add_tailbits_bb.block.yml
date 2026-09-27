@@ -4,7 +4,7 @@ category: '[DRM]/Transmitter'
 flags:
 - python
 templates:
-  imports: import drm
+  imports: import drm_next as drm
   make: drm.add_tailbits_bb(${vlen_in}, ${n_tailbits})
 parameters:
 - id: vlen_in

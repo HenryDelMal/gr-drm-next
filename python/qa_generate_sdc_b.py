@@ -21,7 +21,7 @@
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
-import drm
+import drm_next as drm
 
 class qa_generate_sdc_b (gr_unittest.TestCase):
 

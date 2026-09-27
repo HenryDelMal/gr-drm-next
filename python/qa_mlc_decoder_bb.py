@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from gnuradio import blocks, gr, gr_unittest
-import drm
+import drm_next as drm
 
 
 class qa_mlc_decoder_bb(gr_unittest.TestCase):

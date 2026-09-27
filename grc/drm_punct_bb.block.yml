@@ -4,7 +4,7 @@ category: '[DRM]/Transmitter'
 flags:
 - python
 templates:
-  imports: import drm
+  imports: import drm_next as drm
   make: drm.punct_bb(${punct_pat_1}, ${punct_pat_2}, ${vlen_in}, ${vlen_out}, ${num_tailbits})
 parameters:
 - id: punct_pat_1

@@ -3,7 +3,7 @@ label: DRM Pilot Equalizer
 category: '[DRM]/Receiver'
 flags: [python, cpp]
 templates:
-  imports: from drm.drm_python import pilot_equalizer_vcc
+  imports: from drm_next.drm_python import pilot_equalizer_vcc
   make: pilot_equalizer_vcc(${tp})
 parameters:
 - id: tp

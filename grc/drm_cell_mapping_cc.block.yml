@@ -4,7 +4,7 @@ category: '[DRM]/Transmitter'
 flags:
 - python
 templates:
-  imports: import drm
+  imports: import drm_next as drm
   make: drm.cell_mapping_cc(${tp}, (tp.msc().N_MUX() * tp.ofdm().M_TF() * 8, tp.sdc().N() * 8, tp.fac().N() * tp.ofdm().M_TF() * 8))
 parameters:
 - id: tp

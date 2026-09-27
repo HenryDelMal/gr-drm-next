@@ -4,7 +4,7 @@ category: '[DRM]'
 flags:
 - python
 templates:
-  imports: import drm
+  imports: import drm_next as drm
   make: drm.scrambler_bb(${block_len})
 parameters:
 - id: block_len

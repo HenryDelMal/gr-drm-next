@@ -4,7 +4,7 @@ category: '[DRM]/Transmitter'
 flags:
 - python
 templates:
-  imports: import drm
+  imports: import drm_next as drm
   make: drm.qam_map_bc(${map_table}, ${bits_per_symbol}, ${vlen_out}, ${n_inputs})
 parameters:
 - id: map_table

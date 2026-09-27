@@ -11,7 +11,7 @@ from gnuradio import blocks
 from gnuradio import gr
 from gnuradio import trellis
 from gnuradio.filter import firdes
-import drm
+import drm_next as drm
 
 
 class drm_mlc_4qam_bc(gr.hier_block2):

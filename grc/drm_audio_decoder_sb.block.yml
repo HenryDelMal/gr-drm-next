@@ -3,7 +3,7 @@ label: DRM AAC Decoder (FAAD2)
 category: '[DRM]/Receiver'
 flags: [python, cpp]
 templates:
-  imports: from drm.drm_python import audio_decoder_sb
+  imports: from drm_next.drm_python import audio_decoder_sb
   make: audio_decoder_sb(${tp})
 parameters:
 - id: tp

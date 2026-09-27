@@ -3,7 +3,7 @@ label: DRM QAM Demapper
 category: '[DRM]/Receiver'
 flags: [python, cpp]
 templates:
-  imports: from drm.drm_python import qam_demapper_cb
+  imports: from drm_next.drm_python import qam_demapper_cb
   make: qam_demapper_cb(${map_table}, ${bits_per_symbol}, ${n_outputs})
 parameters:
 - id: map_table

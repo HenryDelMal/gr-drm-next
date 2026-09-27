@@ -4,8 +4,8 @@ category: '[DRM]/Receiver'
 flags: [python]
 templates:
   imports: |-
-    import drm
-    from drm.drm_receiver_ccf import drm_receiver_ccf
+    import drm_next as drm
+    from drm_next.drm_receiver_ccf import drm_receiver_ccf
   make: drm_receiver_ccf(${tp})
 parameters:
 - id: tp

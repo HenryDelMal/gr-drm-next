@@ -3,7 +3,7 @@ label: DRM Cell Deinterleaver
 category: '[DRM]/Receiver'
 flags: [python, cpp]
 templates:
-  imports: from drm.drm_python import deinterleaver_cc
+  imports: from drm_next.drm_python import deinterleaver_cc
   make: deinterleaver_cc(${sequence}, ${long_interleaving}, ${depth})
 parameters:
 - id: sequence
