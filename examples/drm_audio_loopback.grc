@@ -1,21 +1,35 @@
 options:
   parameters:
     author: HenryDelMal
+    catch_exceptions: 'True'
     category: '[DRM Examples]'
-    comment: 'Requires an external FAAD2 build with DRM decoder support; FAAD2 is not bundled.'
-    description: 'Full DRM transmitter and receiver loopback: FAAC, MLC, OFDM, synchronization, channel decoding, FAAD2, and sound-card playback.'
+    cmake_opt: ''
+    comment: Requires an external FAAD2 build with DRM decoder support; FAAD2 is not
+      bundled.
+    copyright: ''
+    description: 'Full DRM transmitter and receiver loopback: FAAC, MLC, OFDM, synchronization,
+      channel decoding, FAAD2, and sound-card playback.'
     gen_cmake: 'Off'
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
     id: drm_audio_loopback
+    max_nouts: '0'
     output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
     run: 'True'
     run_command: '{python} -u {filename}'
     run_options: prompt
     sizing_mode: fixed
+    thread_safe_setters: ''
     title: DRM Full Audio Transceiver Loopback
+    window_size: (1000,1000)
   states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
     coordinate: [8, 8]
     rotation: 0
     state: enabled
@@ -27,6 +41,7 @@ blocks:
     RM: '1'
     SO: '3'
     audio_sample_rate: '24000'
+    comment: ''
     long_interl: 'False'
     msc_mapping: '1'
     msc_prot_level_2_16: '1'
@@ -35,7 +50,311 @@ blocks:
     station_label: '"gr-drm loopback"'
     text_message: '"Full DRM transmitter and receiver"'
   states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
     coordinate: [32, 16]
+    rotation: 0
+    state: enabled
+- name: audio_encoder
+  id: drm_audio_encoder_sb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    len_out: tp.msc().L_MUX()
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tp: tp
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [456, 216]
+    rotation: 0
+    state: enabled
+- name: carrier_vector_to_stream
+  id: blocks_vector_to_stream
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: Flatten mapped carriers for the constellation display.
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: tp.ofdm().nfft()
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1456, 504]
+    rotation: 0
+    state: enabled
+- name: cell_mapper
+  id: cell_mapping_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tp: tp
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1248, 320]
+    rotation: 0
+    state: enabled
+- name: constellation_preview
+  id: qtgui_const_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'False'
+    axislabels: 'True'
+    color1: '"blue"'
+    color10: '"dark blue"'
+    color2: '"red"'
+    color3: '"green"'
+    color4: '"black"'
+    color5: '"cyan"'
+    color6: '"magenta"'
+    color7: '"yellow"'
+    color8: '"dark red"'
+    color9: '"dark green"'
+    comment: MSC, SDC, FAC, and reference carriers before the IFFT.
+    grid: 'True'
+    gui_hint: 0,0,1,1
+    label1: '"DRM carriers"'
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    marker1: '0'
+    marker10: '0'
+    marker2: '0'
+    marker3: '0'
+    marker4: '0'
+    marker5: '0'
+    marker6: '0'
+    marker7: '0'
+    marker8: '0'
+    marker9: '0'
+    name: '"DRM Transmit Constellation"'
+    nconnections: '1'
+    size: '2048'
+    style1: '0'
+    style10: '0'
+    style2: '0'
+    style3: '0'
+    style4: '0'
+    style5: '0'
+    style6: '0'
+    style7: '0'
+    style8: '0'
+    style9: '0'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_slope: qtgui.TRIG_SLOPE_POS
+    tr_tag: '""'
+    type: complex
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    xmax: '2'
+    xmin: '-2'
+    ymax: '2'
+    ymin: '-2'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1664, 504]
+    rotation: 0
+    state: enabled
+- name: cyclic_prefix
+  id: digital_ofdm_cyclic_prefixer
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: Serialize each IFFT vector and prepend the DRM cyclic prefix.
+    cp_len: tp.ofdm().n_cp()
+    input_size: tp.ofdm().nfft()
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    rolloff: '0'
+    tagname: '""'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1664, 320]
+    rotation: 0
+    state: enabled
+- name: fac_generator
+  id: drm_generate_fac_b
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tp: tp
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [456, 368]
+    rotation: 0
+    state: enabled
+- name: fac_mlc
+  id: mlc_bc
+  parameters:
+    affinity: ''
+    alias: ''
+    channel_type: '"FAC"'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tp: tp
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [848, 368]
+    rotation: 0
+    state: enabled
+- name: fac_scrambler
+  id: drm_scrambler_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    block_len: tp.fac().L()
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [656, 368]
+    rotation: 0
+    state: enabled
+- name: ifft
+  id: fft_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: Convert mapped DRM carriers to time-domain OFDM symbols.
+    fft_size: tp.ofdm().nfft()
+    forward: 'False'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    nthreads: '1'
+    shift: 'True'
+    type: complex
+    window: '[]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1456, 320]
+    rotation: 0
+    state: enabled
+- name: msc_interleaver
+  id: drm_interleaver_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    depth: drm.INTL_DEPTH_DRM
+    interl_seq: tp.msc().cell_interl_seq()
+    long_interl: tp.cfg().long_interl()
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1040, 216]
+    rotation: 0
+    state: enabled
+- name: msc_mlc
+  id: mlc_bc
+  parameters:
+    affinity: ''
+    alias: ''
+    channel_type: '"MSC"'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tp: tp
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [848, 216]
+    rotation: 0
+    state: enabled
+- name: msc_scrambler
+  id: drm_scrambler_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    block_len: tp.msc().L_MUX()
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [656, 216]
+    rotation: 0
+    state: enabled
+- name: pcm_scale
+  id: blocks_multiply_const_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: Scale normalized audio for the FAAC float PCM interface.
+    const: '32768.0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [248, 216]
     rotation: 0
     state: enabled
 - name: programme_tone
@@ -44,7 +363,7 @@ blocks:
     affinity: ''
     alias: ''
     amp: '0.05'
-    comment: 'Replace this tone with a 24 kHz mono WAV or audio source.'
+    comment: Replace this tone with a 24 kHz mono WAV or audio source.
     freq: '1000'
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -55,208 +374,483 @@ blocks:
     type: float
     waveform: analog.GR_COS_WAVE
   states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
     coordinate: [32, 216]
     rotation: 0
     state: enabled
-- name: pcm_scale
-  id: blocks_multiply_const_vxx
+- name: rx_audio_decoder
+  id: drm_audio_decoder_sb
   parameters:
     affinity: ''
     alias: ''
-    comment: 'Scale normalized audio for the FAAC float PCM interface.'
-    const: '32768.0'
+    comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    type: float
+    tp: tp
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [4256, 152]
+    rotation: 0
+    state: enabled
+- name: rx_cell_demapper
+  id: drm_cell_demapping_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tp: tp
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2512, 216]
+    rotation: 0
+    state: enabled
+- name: rx_equalizer
+  id: drm_pilot_equalizer_vcc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tp: tp
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2304, 216]
+    rotation: 0
+    state: enabled
+- name: rx_fac_bit_deinterleaver
+  id: drm_deinterleaver_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sequence: tp.fac().bit_interl_seq_0_2()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3184, 456]
+    rotation: 0
+    state: enabled
+- name: rx_fac_descrambler
+  id: drm_scrambler_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    block_len: tp.fac().L()
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3632, 456]
+    rotation: 0
+    state: enabled
+- name: rx_fac_mlc_decoder
+  id: drm_mlc_decoder_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    channel_type: '"FAC"'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tp: tp
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3408, 456]
+    rotation: 0
+    state: enabled
+- name: rx_fac_qam_demapper
+  id: drm_qam_demapper_cb
+  parameters:
+    affinity: ''
+    alias: ''
+    bits_per_symbol: tp.fac().mod_order()
+    comment: ''
+    map_table: tp.cfg().ptables().d_QAM4
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    n_outputs: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2960, 456]
+    rotation: 0
+    state: enabled
+- name: rx_fac_sink
+  id: blocks_null_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    bus_structure_sink: '[[0,],]'
+    comment: ''
+    num_inputs: '1'
+    type: byte
     vlen: '1'
   states:
-    coordinate: [248, 216]
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3840, 456]
     rotation: 0
     state: enabled
-- name: audio_encoder
-  id: drm_audio_encoder_sb
+- name: rx_fac_vector_to_stream
+  id: blocks_vector_to_stream
   parameters:
-    len_out: tp.msc().L_MUX()
-    tp: tp
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: tp.fac().N() * tp.ofdm().M_TF()
+    type: complex
+    vlen: '1'
   states:
-    coordinate: [456, 216]
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2736, 456]
     rotation: 0
     state: enabled
-- name: msc_scrambler
+- name: rx_msc_bit_deinterleaver_0
+  id: drm_deinterleaver_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sequence: tp.msc().bit_interl_seq_0_2()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3408, 120]
+    rotation: 0
+    state: enabled
+- name: rx_msc_bit_deinterleaver_1
+  id: drm_deinterleaver_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sequence: tp.msc().bit_interl_seq_1_2()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3408, 184]
+    rotation: 0
+    state: enabled
+- name: rx_msc_cell_deinterleaver
+  id: drm_deinterleaver_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    depth: drm.INTL_DEPTH_DRM
+    long_interleaving: tp.cfg().long_interl()
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sequence: tp.msc().cell_interl_seq()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2960, 152]
+    rotation: 0
+    state: enabled
+- name: rx_msc_descrambler
   id: drm_scrambler_bb
   parameters:
+    affinity: ''
+    alias: ''
     block_len: tp.msc().L_MUX()
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
   states:
-    coordinate: [656, 216]
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3840, 152]
     rotation: 0
     state: enabled
-- name: msc_mlc
-  id: mlc_bc
+- name: rx_msc_frame
+  id: blocks_stream_to_vector
   parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: tp.msc().L_MUX()
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [4048, 152]
+    rotation: 0
+    state: enabled
+- name: rx_msc_mlc_decoder
+  id: drm_mlc_decoder_bb
+  parameters:
+    affinity: ''
+    alias: ''
     channel_type: '"MSC"'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
     tp: tp
   states:
-    coordinate: [848, 216]
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3632, 152]
     rotation: 0
     state: enabled
-- name: msc_interleaver
-  id: drm_interleaver_cc
+- name: rx_msc_qam_demapper
+  id: drm_qam_demapper_cb
   parameters:
-    depth: 'drm.INTL_DEPTH_DRM'
-    interl_seq: tp.msc().cell_interl_seq()
-    long_interl: tp.cfg().long_interl()
+    affinity: ''
+    alias: ''
+    bits_per_symbol: tp.msc().mod_order()
+    comment: ''
+    map_table: tp.cfg().ptables().d_QAM16
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    n_outputs: tp.msc().n_levels_mlc()
   states:
-    coordinate: [1040, 216]
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3184, 152]
     rotation: 0
     state: enabled
-- name: fac_generator
-  id: drm_generate_fac_b
+- name: rx_msc_vector_to_stream
+  id: blocks_vector_to_stream
   parameters:
-    tp: tp
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: tp.msc().N_MUX() * tp.ofdm().M_TF()
+    type: complex
+    vlen: '1'
   states:
-    coordinate: [456, 368]
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2736, 152]
     rotation: 0
     state: enabled
-- name: fac_scrambler
+- name: rx_ofdm_demodulator
+  id: drm_ofdm_demodulator_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    fft_shift: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    ncp: tp.ofdm().n_cp()
+    nfft: tp.ofdm().nfft()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2096, 216]
+    rotation: 0
+    state: enabled
+- name: rx_sdc_bit_deinterleaver
+  id: drm_deinterleaver_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sequence: tp.sdc().bit_interl_seq_0_2()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3184, 312]
+    rotation: 0
+    state: enabled
+- name: rx_sdc_descrambler
   id: drm_scrambler_bb
   parameters:
-    block_len: tp.fac().L()
+    affinity: ''
+    alias: ''
+    block_len: tp.sdc().L()
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
   states:
-    coordinate: [656, 368]
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3632, 312]
     rotation: 0
     state: enabled
-- name: fac_mlc
-  id: mlc_bc
+- name: rx_sdc_mlc_decoder
+  id: drm_mlc_decoder_bb
   parameters:
-    channel_type: '"FAC"'
+    affinity: ''
+    alias: ''
+    channel_type: '"SDC"'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
     tp: tp
   states:
-    coordinate: [848, 368]
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3408, 312]
+    rotation: 0
+    state: enabled
+- name: rx_sdc_qam_demapper
+  id: drm_qam_demapper_cb
+  parameters:
+    affinity: ''
+    alias: ''
+    bits_per_symbol: tp.sdc().mod_order()
+    comment: ''
+    map_table: tp.cfg().ptables().d_QAM4
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    n_outputs: tp.sdc().n_levels_mlc()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2960, 312]
+    rotation: 0
+    state: enabled
+- name: rx_sdc_sink
+  id: blocks_null_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    bus_structure_sink: '[[0,],]'
+    comment: ''
+    num_inputs: '1'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [3840, 312]
+    rotation: 0
+    state: enabled
+- name: rx_sdc_vector_to_stream
+  id: blocks_vector_to_stream
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: tp.sdc().N()
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2736, 312]
+    rotation: 0
+    state: enabled
+- name: rx_synchronizer
+  id: drm_ofdm_synchronizer_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    ncp: tp.ofdm().n_cp()
+    nfft: tp.ofdm().nfft()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1888, 216]
     rotation: 0
     state: enabled
 - name: sdc_generator
   id: drm_generate_sdc_b
   parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
     tp: tp
   states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
     coordinate: [456, 504]
-    rotation: 0
-    state: enabled
-- name: sdc_scrambler
-  id: drm_scrambler_bb
-  parameters:
-    block_len: tp.sdc().L()
-  states:
-    coordinate: [656, 504]
     rotation: 0
     state: enabled
 - name: sdc_mlc
   id: mlc_bc
   parameters:
+    affinity: ''
+    alias: ''
     channel_type: '"SDC"'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
     tp: tp
   states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
     coordinate: [848, 504]
     rotation: 0
     state: enabled
-- name: cell_mapper
-  id: cell_mapping_cc
-  parameters:
-    tp: tp
-  states:
-    coordinate: [1248, 320]
-    rotation: 0
-    state: enabled
-- name: carrier_vector_to_stream
-  id: blocks_vector_to_stream
+- name: sdc_scrambler
+  id: drm_scrambler_bb
   parameters:
     affinity: ''
     alias: ''
-    comment: 'Flatten mapped carriers for the constellation display.'
+    block_len: tp.sdc().L()
+    comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    num_items: tp.ofdm().nfft()
-    type: complex
-    vlen: '1'
   states:
-    coordinate: [1456, 504]
-    rotation: 0
-    state: enabled
-- name: constellation_preview
-  id: qtgui_const_sink_x
-  parameters:
-    affinity: ''
-    alias: ''
-    alpha1: '1.0'
-    autoscale: 'False'
-    axislabels: 'True'
-    color1: '"blue"'
-    comment: 'MSC, SDC, FAC, and reference carriers before the IFFT.'
-    grid: 'True'
-    gui_hint: 0,0,1,1
-    label1: '"DRM carriers"'
-    legend: 'True'
-    marker1: '0'
-    name: '"DRM Transmit Constellation"'
-    nconnections: '1'
-    size: '2048'
-    style1: '0'
-    tr_chan: '0'
-    tr_level: '0.0'
-    tr_mode: qtgui.TRIG_MODE_FREE
-    tr_slope: qtgui.TRIG_SLOPE_POS
-    tr_tag: '""'
-    type: complex
-    update_time: '0.10'
-    width1: '1'
-    xmax: '2'
-    xmin: '-2'
-    ymax: '2'
-    ymin: '-2'
-  states:
-    coordinate: [1664, 504]
-    rotation: 0
-    state: enabled
-- name: ifft
-  id: fft_vxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: 'Convert mapped DRM carriers to time-domain OFDM symbols.'
-    fft_size: tp.ofdm().nfft()
-    forward: 'False'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    nthreads: '1'
-    shift: 'True'
-    type: complex
-    window: '[]'
-  states:
-    coordinate: [1456, 320]
-    rotation: 0
-    state: enabled
-- name: cyclic_prefix
-  id: digital_ofdm_cyclic_prefixer
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: 'Serialize each IFFT vector and prepend the DRM cyclic prefix.'
-    cp_len: tp.ofdm().n_cp()
-    input_size: tp.ofdm().nfft()
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    rolloff: '0'
-    tagname: '""'
-  states:
-    coordinate: [1664, 320]
-    rotation: 0
-    state: enabled
-- name: receiver
-  id: drm_receiver_ccf
-  parameters:
-    tp: tp
-  states:
-    coordinate: [1888, 320]
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [656, 504]
     rotation: 0
     state: enabled
 - name: soundcard_sink
@@ -264,35 +858,63 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    comment: 'Recovered 24 kHz PCM from the full DRM receiver.'
+    comment: Recovered 24 kHz PCM from the full DRM receiver.
     device_name: '""'
     num_inputs: '1'
     ok_to_block: 'True'
     samp_rate: tp.cfg().audio_samp_rate()
   states:
-    coordinate: [2112, 320]
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [4544, 284.0]
     rotation: 0
     state: enabled
 
 connections:
-- [programme_tone, '0', pcm_scale, '0']
-- [pcm_scale, '0', audio_encoder, '0']
 - [audio_encoder, '0', msc_scrambler, '0']
-- [msc_scrambler, '0', msc_mlc, '0']
-- [msc_mlc, '0', msc_interleaver, '0']
-- [msc_interleaver, '0', cell_mapper, '0']
-- [sdc_generator, '0', sdc_scrambler, '0']
-- [sdc_scrambler, '0', sdc_mlc, '0']
-- [sdc_mlc, '0', cell_mapper, '1']
-- [fac_generator, '0', fac_scrambler, '0']
-- [fac_scrambler, '0', fac_mlc, '0']
-- [fac_mlc, '0', cell_mapper, '2']
-- [cell_mapper, '0', carrier_vector_to_stream, '0']
 - [carrier_vector_to_stream, '0', constellation_preview, '0']
+- [cell_mapper, '0', carrier_vector_to_stream, '0']
 - [cell_mapper, '0', ifft, '0']
+- [cyclic_prefix, '0', rx_synchronizer, '0']
+- [fac_generator, '0', fac_scrambler, '0']
+- [fac_mlc, '0', cell_mapper, '2']
+- [fac_scrambler, '0', fac_mlc, '0']
 - [ifft, '0', cyclic_prefix, '0']
-- [cyclic_prefix, '0', receiver, '0']
-- [receiver, '0', soundcard_sink, '0']
+- [msc_interleaver, '0', cell_mapper, '0']
+- [msc_mlc, '0', msc_interleaver, '0']
+- [msc_scrambler, '0', msc_mlc, '0']
+- [pcm_scale, '0', audio_encoder, '0']
+- [programme_tone, '0', pcm_scale, '0']
+- [rx_audio_decoder, '0', soundcard_sink, '0']
+- [rx_cell_demapper, '0', rx_msc_vector_to_stream, '0']
+- [rx_cell_demapper, '1', rx_sdc_vector_to_stream, '0']
+- [rx_cell_demapper, '2', rx_fac_vector_to_stream, '0']
+- [rx_equalizer, '0', rx_cell_demapper, '0']
+- [rx_fac_bit_deinterleaver, '0', rx_fac_mlc_decoder, '0']
+- [rx_fac_descrambler, '0', rx_fac_sink, '0']
+- [rx_fac_mlc_decoder, '0', rx_fac_descrambler, '0']
+- [rx_fac_qam_demapper, '0', rx_fac_bit_deinterleaver, '0']
+- [rx_fac_vector_to_stream, '0', rx_fac_qam_demapper, '0']
+- [rx_msc_bit_deinterleaver_0, '0', rx_msc_mlc_decoder, '0']
+- [rx_msc_bit_deinterleaver_1, '0', rx_msc_mlc_decoder, '1']
+- [rx_msc_cell_deinterleaver, '0', rx_msc_qam_demapper, '0']
+- [rx_msc_descrambler, '0', rx_msc_frame, '0']
+- [rx_msc_frame, '0', rx_audio_decoder, '0']
+- [rx_msc_mlc_decoder, '0', rx_msc_descrambler, '0']
+- [rx_msc_qam_demapper, '0', rx_msc_bit_deinterleaver_0, '0']
+- [rx_msc_qam_demapper, '1', rx_msc_bit_deinterleaver_1, '0']
+- [rx_msc_vector_to_stream, '0', rx_msc_cell_deinterleaver, '0']
+- [rx_ofdm_demodulator, '0', rx_equalizer, '0']
+- [rx_sdc_bit_deinterleaver, '0', rx_sdc_mlc_decoder, '0']
+- [rx_sdc_descrambler, '0', rx_sdc_sink, '0']
+- [rx_sdc_mlc_decoder, '0', rx_sdc_descrambler, '0']
+- [rx_sdc_qam_demapper, '0', rx_sdc_bit_deinterleaver, '0']
+- [rx_sdc_vector_to_stream, '0', rx_sdc_qam_demapper, '0']
+- [rx_synchronizer, '0', rx_ofdm_demodulator, '0']
+- [sdc_generator, '0', sdc_scrambler, '0']
+- [sdc_mlc, '0', cell_mapper, '1']
+- [sdc_scrambler, '0', sdc_mlc, '0']
 
 metadata:
   file_format: 1
