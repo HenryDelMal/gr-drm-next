@@ -11,8 +11,10 @@ class cell_demapping_cc_impl : public cell_demapping_cc
     transm_params* d_tp;
     tables* d_tables;
     unsigned int d_nfft, d_ns, d_mtf, d_nmsc, d_nsdc, d_nfac;
+    unsigned int d_symbols_buffered;
     int d_rm, d_kmin, d_kmax, d_n_sdc_sym;
     std::vector<int> d_unused;
+    std::vector<gr_complex> d_symbol_buffer;
     std::vector<unsigned char> build_reserved_mask() const;
     bool used_carrier(int k) const;
 public:

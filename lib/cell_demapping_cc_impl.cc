@@ -24,8 +24,10 @@ cell_demapping_cc_impl::cell_demapping_cc_impl(transm_params* tp)
                       static_cast<int>(tp->fac().N() * tp->ofdm().M_TF() * sizeof(gr_complex)) })),
       d_tp(tp), d_tables(tp->cfg().ptables()), d_nfft(tp->ofdm().nfft()),
       d_ns(tp->ofdm().N_S()), d_mtf(tp->ofdm().M_TF()), d_nmsc(tp->msc().N_MUX()),
-      d_nsdc(tp->sdc().N()), d_nfac(tp->fac().N()), d_rm(tp->cfg().RM()),
-      d_kmin(tp->ofdm().K_min()), d_kmax(tp->ofdm().K_max()), d_n_sdc_sym(0)
+      d_nsdc(tp->sdc().N()), d_nfac(tp->fac().N()), d_symbols_buffered(0),
+      d_rm(tp->cfg().RM()), d_kmin(tp->ofdm().K_min()),
+      d_kmax(tp->ofdm().K_max()), d_n_sdc_sym(0),
+      d_symbol_buffer(d_ns * d_mtf * d_nfft)
 {
     switch (d_rm) {
     case 0: d_unused = { -1, 0, 1 }; d_n_sdc_sym = 2; break;
@@ -85,7 +87,11 @@ std::vector<unsigned char> cell_demapping_cc_impl::build_reserved_mask() const
 
 void cell_demapping_cc_impl::forecast(int noutput_items, gr_vector_int& required)
 {
-    required[0] = noutput_items * d_ns * d_mtf;
+    // A complete DRM superframe can be larger than GNU Radio's mapped input
+    // buffer on platforms with a large allocation granularity (notably
+    // macOS). Consume it incrementally instead of requiring all symbols to be
+    // present in one scheduler call.
+    required[0] = noutput_items > 0 && d_symbols_buffered < d_ns * d_mtf ? 1 : 0;
 }
 
 int cell_demapping_cc_impl::general_work(int noutput_items,
@@ -94,26 +100,40 @@ int cell_demapping_cc_impl::general_work(int noutput_items,
                                          gr_vector_void_star& output_items)
 {
     const unsigned int symbols_per_superframe = d_ns * d_mtf;
-    const int frames = std::min(noutput_items,
-                                ninput_items[0] / static_cast<int>(symbols_per_superframe));
     const auto* input = static_cast<const gr_complex*>(input_items[0]);
     auto* msc_out = static_cast<gr_complex*>(output_items[0]);
     auto* sdc_out = static_cast<gr_complex*>(output_items[1]);
     auto* fac_out = static_cast<gr_complex*>(output_items[2]);
     const int k_off = d_nfft / 2;
+    int consumed = 0;
+    int produced = 0;
 
     const int (*fac)[2] = d_rm == 0 ? tables::d_FAC_A :
                           d_rm == 1 ? tables::d_FAC_B :
                           d_rm == 2 ? tables::d_FAC_C :
                           d_rm == 3 ? tables::d_FAC_D : tables::d_FAC_E;
 
-    for (int frame = 0; frame < frames; ++frame) {
-        const auto* super = input + frame * symbols_per_superframe * d_nfft;
+    while (produced < noutput_items) {
+        const unsigned int symbols_needed = symbols_per_superframe - d_symbols_buffered;
+        const unsigned int symbols_available = ninput_items[0] - consumed;
+        const unsigned int symbols_to_copy = std::min(symbols_needed, symbols_available);
+
+        if (symbols_to_copy > 0) {
+            std::memcpy(d_symbol_buffer.data() + d_symbols_buffered * d_nfft,
+                        input + consumed * d_nfft,
+                        symbols_to_copy * d_nfft * sizeof(gr_complex));
+            d_symbols_buffered += symbols_to_copy;
+            consumed += symbols_to_copy;
+        }
+        if (d_symbols_buffered < symbols_per_superframe)
+            break;
+
+        const auto* super = d_symbol_buffer.data();
         auto reserved = build_reserved_mask();
 
         for (unsigned int tf = 0; tf < d_mtf; ++tf)
             for (unsigned int i = 0; i < d_nfac; ++i)
-                fac_out[(frame * d_mtf + tf) * d_nfac + i] =
+                fac_out[(produced * d_mtf + tf) * d_nfac + i] =
                     super[(tf * d_ns + fac[i][0]) * d_nfft + fac[i][1] + k_off];
 
         unsigned int sdc_n = 0;
@@ -121,7 +141,7 @@ int cell_demapping_cc_impl::general_work(int noutput_items,
             for (int k = d_kmin; k <= d_kmax && sdc_n < d_nsdc; ++k) {
                 const unsigned int index = s * d_nfft + k + k_off;
                 if (!reserved[index] && used_carrier(k)) {
-                    sdc_out[frame * d_nsdc + sdc_n++] = super[index];
+                    sdc_out[produced * d_nsdc + sdc_n++] = super[index];
                     reserved[index] = 1;
                 }
             }
@@ -133,15 +153,18 @@ int cell_demapping_cc_impl::general_work(int noutput_items,
                 for (int k = d_kmin; k <= d_kmax && msc_n < d_nmsc * d_mtf; ++k) {
                     const unsigned int index = (tf * d_ns + s) * d_nfft + k + k_off;
                     if (!reserved[index] && used_carrier(k))
-                        msc_out[frame * d_nmsc * d_mtf + msc_n++] = super[index];
+                        msc_out[produced * d_nmsc * d_mtf + msc_n++] = super[index];
                 }
             }
         }
         if (sdc_n != d_nsdc || msc_n != d_nmsc * d_mtf)
             throw std::runtime_error("DRM cell map did not match configured channel sizes");
+
+        d_symbols_buffered = 0;
+        ++produced;
     }
-    consume_each(frames * symbols_per_superframe);
-    return frames;
+    consume_each(consumed);
+    return produced;
 }
 
 } }
