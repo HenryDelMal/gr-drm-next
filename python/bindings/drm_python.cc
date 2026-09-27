@@ -15,6 +15,7 @@
 #include <drm/partitioning_bb.h>
 #include <drm/punct_bb.h>
 #include <drm/qam_map_bc.h>
+#include <drm/qam_demapper_cb.h>
 #include <drm/scrambler_bb.h>
 #include "drm_global_constants.h"
 #include "drm_transm_params.h"
@@ -143,6 +144,18 @@ PYBIND11_MODULE(drm_python, m)
             }
             return gr::drm::qam_map_bc::make(native, bits, vlen, inputs);
         }), py::arg("map_table"), py::arg("bits_per_symbol"), py::arg("vlen_out"), py::arg("n_inputs"));
+
+    py::class_<gr::drm::qam_demapper_cb, gr::block,
+               std::shared_ptr<gr::drm::qam_demapper_cb>>(m, "qam_demapper_cb")
+        .def(py::init([](const std::vector<std::vector<float>>& table, int bits, int outputs) {
+            if (table.size() > 8) throw py::value_error("QAM table has more than 8 rows");
+            float native[8][2] = {};
+            for (size_t i = 0; i < table.size(); ++i) {
+                if (table[i].size() != 2) throw py::value_error("each QAM row must contain I and Q");
+                native[i][0] = table[i][0]; native[i][1] = table[i][1];
+            }
+            return gr::drm::qam_demapper_cb::make(native, bits, outputs);
+        }), py::arg("map_table"), py::arg("bits_per_symbol"), py::arg("n_outputs"));
 
     m.attr("INTL_DEPTH_DRM") = INTL_DEPTH_DRM;
     m.attr("INTL_DEPTH_DRMPLUS") = INTL_DEPTH_DRMPLUS;

@@ -1,0 +1,27 @@
+id: drm_qam_demapper_cb
+label: DRM QAM Demapper
+category: '[DRM] Receiver'
+flags: [python, cpp]
+templates:
+  imports: import drm
+  make: drm.qam_demapper_cb(${map_table}, ${bits_per_symbol}, ${n_outputs})
+parameters:
+- id: map_table
+  label: QAM table
+  dtype: raw
+- id: bits_per_symbol
+  label: Bits per symbol
+  dtype: int
+  default: '4'
+- id: n_outputs
+  label: MLC levels
+  dtype: int
+  default: '2'
+inputs:
+- domain: stream
+  dtype: complex
+outputs:
+- domain: stream
+  dtype: byte
+  multiplicity: ${n_outputs}
+file_format: 1
